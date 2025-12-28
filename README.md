@@ -52,7 +52,7 @@ This game is designed to be easy to modify and expand! Here are some ideas:
 2. **Test Often**: Refresh the browser after each change to see results
 3. **Read the Code**: The `game.js` file has comments explaining each section
 4. **Experiment**: Don't be afraid to break things - you can always undo changes!
-5. **Talk to Claude**: Ask Claude about anything, no matter how dumb. Tell Claude what to do.
+5. **Talk to Claude**: Ask Claude about anything, no matter how dumb. Then, tell Claude about your idea, and it'll implement it for you. You can read `claude-conversation.md` to see how easy this is
 
 ## Getting Started With Claude Code
 
