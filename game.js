@@ -24,6 +24,7 @@ class ChickenGuacamolePants {
         
         this.guacamoles = [];
         this.bombs = [];
+        this.zombie = null;
         
         // Spawn timers
         this.guacamoleSpawnTimer = 0;
@@ -76,6 +77,7 @@ class ChickenGuacamolePants {
         // Clear arrays
         this.guacamoles = [];
         this.bombs = [];
+        this.zombie = null;
         
         // Reset timers
         this.guacamoleSpawnTimer = 0;
@@ -105,8 +107,10 @@ class ChickenGuacamolePants {
         this.updateChicken();
         this.spawnGuacamole();
         this.spawnBombs();
+        this.spawnZombie();
         this.updateGuacamoles();
         this.updateBombs();
+        this.updateZombie();
         this.checkCollisions();
     }
     
@@ -201,6 +205,50 @@ class ChickenGuacamolePants {
         // Bombs don't move, they just stay where they are
     }
     
+    spawnZombie() {
+        // Spawn zombie when score reaches 50
+        if (this.score >= 50 && !this.zombie) {
+            this.zombie = {
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                size: 40,
+                speed: 2,
+                emoji: '🧟‍♂️'
+            };
+        }
+    }
+    
+    updateZombie() {
+        if (!this.zombie) return;
+        
+        // Simple AI: move toward the chicken
+        const dx = this.chicken.x - this.zombie.x;
+        const dy = this.chicken.y - this.zombie.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance > 0) {
+            // Normalize direction and apply zombie speed
+            const moveX = (dx / distance) * this.zombie.speed;
+            const moveY = (dy / distance) * this.zombie.speed;
+            
+            this.zombie.x += moveX;
+            this.zombie.y += moveY;
+            
+            // Handle torus wrapping for zombie too
+            if (this.zombie.x < 0) {
+                this.zombie.x = this.canvas.width;
+            } else if (this.zombie.x > this.canvas.width) {
+                this.zombie.x = 0;
+            }
+            
+            if (this.zombie.y < 0) {
+                this.zombie.y = this.canvas.height;
+            } else if (this.zombie.y > this.canvas.height) {
+                this.zombie.y = 0;
+            }
+        }
+    }
+    
     checkCollisions() {
         // Check guacamole collection
         this.guacamoles.forEach(guac => {
@@ -220,6 +268,11 @@ class ChickenGuacamolePants {
                 this.endGame();
             }
         });
+        
+        // Check zombie collision
+        if (this.zombie && this.getDistance(this.chicken, this.zombie) < (this.chicken.size + this.zombie.size) / 2) {
+            this.endGame();
+        }
     }
     
     getDistance(obj1, obj2) {
@@ -255,6 +308,11 @@ class ChickenGuacamolePants {
         this.bombs.forEach(bomb => {
             this.drawEmoji(bomb.emoji, bomb.x, bomb.y, bomb.size);
         });
+        
+        // Draw zombie
+        if (this.zombie) {
+            this.drawEmoji(this.zombie.emoji, this.zombie.x, this.zombie.y, this.zombie.size);
+        }
         
         // Draw chicken
         this.drawEmoji(this.chicken.emoji, this.chicken.x, this.chicken.y, this.chicken.size);
